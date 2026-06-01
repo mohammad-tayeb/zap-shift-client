@@ -1,0 +1,38 @@
+/* custom font */
+@import url("https://fonts.googleapis.com/css2?family=Urbanist:ital,wght@0,100..900;1,100..900&display=swap");
+/* custom font */
+
+@import "tailwindcss";
+@plugin "daisyui" {
+  themes: light --default;
+};
+
+
+/* changing primary and secondary color in daisyUI */
+@plugin "daisyui/theme" {
+  name: "light";
+  default: true;
+  --color-primary: #CAEB66;
+  --color-secondary: #03373D;
+  --color-base-100: #f0f4f4;
+}
+/* changing primary and secondary color in daisyUI */
+
+
+/* custom font */
+body {
+  font-family: "Urbanist", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+}
+/* custom font */
+
+/* index.css */
+
+.reviewSwiper {
+  padding-bottom: 40px;
+}
+
+.reviewSwiper .swiper-pagination {
+  bottom: -10px !important;
+}

@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import { useLoaderData } from "react-router";
+import { useLoaderData, useNavigate } from "react-router";
 import Swal from "sweetalert2";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 import useAuth from "../../hooks/useAuth";
@@ -9,6 +9,7 @@ export default function SendParcelForm() {
     register,
     handleSubmit,
     watch,
+    reset,
     formState: { errors },
   } = useForm({
     defaultValues: {
@@ -18,6 +19,7 @@ export default function SendParcelForm() {
   const { user } = useAuth();
   // using axios sending data to database
   const axiosSecure = useAxiosSecure();
+  const navigate = useNavigate();
 
   // finding available districts name using the selected region name
   const senderRegion = watch("senderRegion");
@@ -34,7 +36,6 @@ export default function SendParcelForm() {
     const districts = regionDitricts.map((d) => d.district); //from selected data take only didtricts data
     return districts;
   };
-  // finding available districts name using the selected region name
 
   // finding district based on region (sender side form)
   const districtsByRegionReceiver = (region) => {
@@ -42,16 +43,13 @@ export default function SendParcelForm() {
     const districts = regionDitricts.map((d) => d.district); //from selected data take only didtricts data
     return districts;
   };
-  // finding available districts name using the selected region name
 
   const onSubmit = (data) => {
     console.log("Form Data:", data);
 
     // parcel price calculation
     const isDocument = data.parcelType === "Document";
-    const isSameDistrict =
-      data.senderRegion === data.receiverRegion &&
-      data.senderDistrict === data.receiverDistrict;
+    const isSameDistrict = data.senderRegion === data.receiverRegion;
     const parcelWeight = parseFloat(data.parcelWeight);
     let cost;
 
@@ -94,6 +92,8 @@ export default function SendParcelForm() {
           text: "We will collect your parcel!",
           icon: "success",
         });
+        reset();
+        navigate("/dashboard/myParcels");
       }
     });
   };
@@ -118,20 +118,20 @@ export default function SendParcelForm() {
               <label className="flex items-center gap-2 cursor-pointer text-sm font-semibold text-[#003b36]">
                 <input
                   type="radio"
+                  value="Not-Document"
+                  {...register("parcelType")}
+                  className="w-4 h-4 text-green-600 border-gray-300 focus:ring-green-500 accent-emerald-600"
+                />
+                Regular
+              </label>
+              <label className="flex items-center gap-2 cursor-pointer text-sm font-semibold text-[#003b36]">
+                <input
+                  type="radio"
                   value="Document"
                   {...register("parcelType")}
                   className="w-4 h-4 text-green-600 border-gray-300 focus:ring-green-500 accent-emerald-600"
                 />
                 Document
-              </label>
-              <label className="flex items-center gap-2 cursor-pointer text-sm font-semibold text-[#003b36]">
-                <input
-                  type="radio"
-                  value="Not-Document"
-                  {...register("parcelType")}
-                  className="w-4 h-4 text-green-600 border-gray-300 focus:ring-green-500 accent-emerald-600"
-                />
-                Not-Document
               </label>
             </div>
 

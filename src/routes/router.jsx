@@ -16,6 +16,7 @@ import DashboardHome from "../pages/DashboardHome/DashboardHome";
 import AboutUs from "../pages/AboutUs/AboutUs";
 import ErrorPage from "../pages/ErrorPage/ErrorPage";
 import ParcelList from "../pages/ParcelList/ParcelList";
+import Pricing from "../pages/Pricing/Pricing";
 
 export const router = createBrowserRouter([
   //root routes
@@ -54,8 +55,13 @@ export const router = createBrowserRouter([
       },
       {
         path: "aboutUs",
-        Component: AboutUs
-      }
+        Component: AboutUs,
+      },
+      {
+        path: "pricing",
+        Component: Pricing,
+        loader: () => fetch("/serviceCenters.json").then((res) => res.json()),
+      },
     ],
   },
 
@@ -103,10 +109,10 @@ export const router = createBrowserRouter([
         Component: ParcelDetails,
       },
       {
-        path:"covarage-area",
+        path: "covarage-area",
         Component: Covarage,
         loader: () => fetch("/serviceCenters.json").then((res) => res.json()),
-      }
+      },
     ],
   },
 ]);

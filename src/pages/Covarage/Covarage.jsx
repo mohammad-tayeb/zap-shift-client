@@ -54,7 +54,7 @@ function Covarage() {
     <div>
       {/* HEADER */}
       <div className="w-full max-w-7xl mx-auto px-6 py-16 md:py-24 bg-white font-sans select-none">
-        <div className="max-w-3xl">
+        <div className="flex flex-col items-center justify-center">
           <h2 className="text-4xl md:text-5xl font-black text-[#04332D] tracking-tight mb-8">
             We are available in 64 districts
           </h2>
@@ -80,12 +80,6 @@ function Covarage() {
           </form>
         </div>
       </div>
-
-      <hr className="border-t border-dotted w-6xl mx-auto mb-10" />
-
-      <h3 className="text-xl ms-12 md:text-2xl font-bold text-[#04332D]">
-        We deliver almost all over Bangladesh
-      </h3>
 
       {/* MAP */}
       <div className="w-6xl mx-auto h-100 my-12">

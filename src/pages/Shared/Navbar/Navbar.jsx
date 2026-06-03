@@ -18,14 +18,8 @@ function Navbar() {
   const links = (
     <>
       <li className="font-bold text-gray-600 hover:text-secondary">
-        <NavLink className="hover:bg-transparent" to="/services">
-          Services
-        </NavLink>
-      </li>
-
-      <li className="font-bold text-gray-600 hover:text-secondary">
-        <NavLink className="hover:bg-transparent" to="/aboutUs">
-          About Us
+        <NavLink className="hover:bg-transparent" to="/pricing">
+          Pricing
         </NavLink>
       </li>
 
@@ -36,20 +30,32 @@ function Navbar() {
       </li>
 
       <li className="font-bold text-gray-600 hover:text-secondary">
+        <NavLink className="hover:bg-transparent" to="/aboutUs">
+          About Us
+        </NavLink>
+      </li>
+
+      <li className="font-bold text-gray-600 hover:text-secondary">
         <NavLink className="hover:bg-transparent" to="/be-a-rider">
           Be a Rider
         </NavLink>
       </li>
+
       <li className="font-bold text-gray-600 hover:text-secondary">
         <NavLink className="hover:bg-transparent" to="/send-a-parcel">
           Send a Parcel
         </NavLink>
       </li>
-    {user?(  <li className="font-bold text-gray-600 hover:text-secondary">
-        <NavLink className="hover:bg-transparent" to="/dashboard" end>
-          Dashboard
-        </NavLink>
-      </li>): ""}
+      
+      {user ? (
+        <li className="font-bold text-gray-600 hover:text-secondary">
+          <NavLink className="hover:bg-transparent" to="/dashboard" end>
+            Dashboard
+          </NavLink>
+        </li>
+      ) : (
+        ""
+      )}
     </>
   );
   return (
@@ -115,12 +121,6 @@ function Navbar() {
             Login
           </Link>
         )}
-        <Link
-          to="/be-a-rider"
-          className="md:btn-md btn-sm btn btn-primary text-secondary"
-        >
-          Be a Rider
-        </Link>
       </div>
     </div>
   );

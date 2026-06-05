@@ -11,12 +11,14 @@ import BeARider from "../pages/BeARider/BeARider";
 import PrivateRoute from "./PrivateRoute";
 import SendParcelForm from "../pages/SendParcel/SendParcelForm";
 import DashBoardLayout from "../layouts/DashBoardLayout";
-import ParcelDetails from "../pages/ParcelDetails.jsx/ParcelDetails";
 import DashboardHome from "../pages/DashboardHome/DashboardHome";
 import AboutUs from "../pages/AboutUs/AboutUs";
 import ErrorPage from "../pages/ErrorPage/ErrorPage";
 import ParcelList from "../pages/ParcelList/ParcelList";
 import Pricing from "../pages/Pricing/Pricing";
+import Payment from "../pages/Payment/Payment";
+import PaymentSuccess from "../pages/PaymentSuccess/PaymentSuccess";
+import PaymentError from "../pages/PaymentError/PaymentError";
 
 export const router = createBrowserRouter([
   //root routes
@@ -105,13 +107,22 @@ export const router = createBrowserRouter([
         Component: ParcelList,
       },
       {
-        path: "parcelDetails/:id",
-        Component: ParcelDetails,
-      },
-      {
         path: "covarage-area",
         Component: Covarage,
         loader: () => fetch("/serviceCenters.json").then((res) => res.json()),
+      },
+      // payment route
+      {
+        path: "payment/:id",
+        Component: Payment,
+      },
+      {
+        path: "payment-cancelled",
+        Component: PaymentError,
+      },
+      {
+        path: "payment-success",
+        Component: PaymentSuccess,
       },
     ],
   },

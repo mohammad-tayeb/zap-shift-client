@@ -8,7 +8,7 @@ function ParcelList() {
   const { user } = useAuth();
   const axiosSecure = useAxiosSecure();
 
-  const { data: parcels = [] } = useQuery({
+  const { data: parcels = [], refetch } = useQuery({
     queryKey: ["myParcels", user?.email],
     enabled: !!user?.email,
     queryFn: async () => {
@@ -32,7 +32,7 @@ function ParcelList() {
   const handleParcelDelete = (id) => {
     console.log(id);
     Swal.fire({
-      title: "Are you sure?",
+      title: "Delete Parcel PickUp Request?",
       text: "You won't be able to revert this!",
       icon: "warning",
       showCancelButton: true,
@@ -41,20 +41,22 @@ function ParcelList() {
       confirmButtonText: "Yes, delete it!",
     }).then((result) => {
       if (result.isConfirmed) {
-        axiosSecure.delete(`/parcels/${id}`)
-        .then((res) => {
+        axiosSecure.delete(`/parcels/${id}`).then((res) => {
           console.log(res);
-        });
-        Swal.fire({
-          title: "Deleted!",
-          text: "Your file has been deleted.",
-          icon: "success",
+          refetch();
+          if (res.data.deletedCount) {
+            Swal.fire({
+              title: "Deleted!",
+              text: "Your parcel request has been deleted.",
+              icon: "success",
+            });
+          }
         });
       }
     });
   };
   return (
-    <div className="p-6">
+    <div className="">
       <h2 className="text-3xl font-bold mb-6">My Parcels: {parcels.length}</h2>
 
       <div className="overflow-x-auto bg-white rounded-xl shadow">
@@ -67,6 +69,7 @@ function ParcelList() {
               <th>Receiver Location</th>
               <th>Cost</th>
               <th>Created At</th>
+              <th>Payment Status</th>
               <th>Action</th>
             </tr>
           </thead>
@@ -90,6 +93,18 @@ function ParcelList() {
                 <td>{parcel?.cost}</td>
                 <td>{new Date(parcel?.createdAt).toLocaleString()}</td>
                 <td>
+                  {parcel.paymentStatus === "paid" ? (
+                    <Link
+                      to={`/dashboard/payment/${parcel._id}`}
+                      className="btn btn-sm btn-primary text-secondary"
+                    >
+                      Pay
+                    </Link>
+                  ) : (
+                    <button className="btn btn-sm btn-disabled">Paid</button>
+                  )}
+                </td>
+                <td>
                   <Link
                     to={`/dashboard/parcelDetails/${parcel._id}`}
                     className="btn btn-sm btn-primary text-secondary w-full"
@@ -112,7 +127,10 @@ function ParcelList() {
                       </button>
                     </div>
                   ) : (
-                    <div>
+                    <div
+                      className="flex flex-col tooltip tooltip-left"
+                      data-tip="Can not edit or delete after 4pm!"
+                    >
                       <button
                         disabled
                         className="btn btn-sm btn-disabled tooltip tooltip-left"
@@ -120,6 +138,7 @@ function ParcelList() {
                         Delete
                       </button>
                       <button
+                        disabled
                         // onClick={() => handleEdit(parcel._id)}
                         className="btn btn-sm btn-warning"
                       >

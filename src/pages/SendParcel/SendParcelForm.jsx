@@ -71,7 +71,7 @@ export default function SendParcelForm() {
     // parcel price calculation
 
     // send the cost value with the data from the form
-    const parcelData = { ...data, cost: cost };
+    const parcelData = { ...data, cost: cost, payment_status: "unpaid" };
     Swal.fire({
       title: "Confirm Order?",
       text: `delivary Charge: ${cost}৳`,

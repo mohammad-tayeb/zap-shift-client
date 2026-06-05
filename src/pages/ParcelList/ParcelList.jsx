@@ -93,15 +93,15 @@ function ParcelList() {
                 <td>{parcel?.cost}</td>
                 <td>{new Date(parcel?.createdAt).toLocaleString()}</td>
                 <td>
-                  {parcel.paymentStatus === "paid" ? (
+                  {parcel.payment_status === "paid" ? (
+                    <h1 className="text-secondary font-bold">Paid</h1>
+                  ) : (
                     <Link
                       to={`/dashboard/payment/${parcel._id}`}
                       className="btn btn-sm btn-primary text-secondary"
                     >
                       Pay
                     </Link>
-                  ) : (
-                    <button className="btn btn-sm btn-disabled">Paid</button>
                   )}
                 </td>
                 <td>

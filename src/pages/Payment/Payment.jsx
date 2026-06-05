@@ -43,7 +43,7 @@ function Payment() {
               Parcel Details
             </h1>
             <button
-              className="btn btn-primary text-secondary w-32"
+              className="btn btn-primary text-secondary w-48"
               onClick={handlePayment}
             >
               Pay

@@ -1,6 +1,22 @@
-import { Link } from "react-router";
+import { Link, useSearchParams } from "react-router";
 import { CheckCircle } from "lucide-react";
+import { useEffect } from "react";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
 function PaymentSuccess() {
+  const [searchParams] = useSearchParams();
+  const sessionId = searchParams.get("session_id");
+  const axiosSecure = useAxiosSecure();
+  console.log(sessionId);
+
+  useEffect(() => {
+    if (sessionId) {
+      axiosSecure
+        .patch(`/varify-payment?session_id=${sessionId}`)
+        .then((res) => {
+          console.log(res);
+        });
+    }
+  }, [sessionId, axiosSecure]);
   return (
     <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4">
       <div className="max-w-lg w-full bg-white rounded-3xl shadow-lg p-10 text-center">

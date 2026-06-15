@@ -94,7 +94,7 @@ function ParcelList() {
                 <td>{new Date(parcel?.createdAt).toLocaleString()}</td>
                 <td>
                   {parcel.payment_status === "paid" ? (
-                    <h1 className="text-secondary font-bold">Paid</h1>
+                    <span className="px-2 py-1 rounded text-xs font-semibold bg-green-100 text-green-700">Paid</span>
                   ) : (
                     <Link
                       to={`/dashboard/payment/${parcel._id}`}
@@ -106,7 +106,7 @@ function ParcelList() {
                 </td>
                 <td>
                   <Link
-                    to={`/dashboard/parcelDetails/${parcel._id}`}
+                    to={`/dashboard/payment/${parcel._id}`}
                     className="btn btn-sm btn-primary text-secondary w-full"
                   >
                     View

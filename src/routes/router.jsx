@@ -19,6 +19,7 @@ import Pricing from "../pages/Pricing/Pricing";
 import Payment from "../pages/Payment/Payment";
 import PaymentSuccess from "../pages/PaymentSuccess/PaymentSuccess";
 import PaymentError from "../pages/PaymentError/PaymentError";
+import PaymentHistory from "../pages/PaymentHistory/PaymentHistory";
 
 export const router = createBrowserRouter([
   //root routes
@@ -111,6 +112,10 @@ export const router = createBrowserRouter([
         Component: Covarage,
         loader: () => fetch("/serviceCenters.json").then((res) => res.json()),
       },
+      {
+        path: "payment-history",
+        Component: PaymentHistory,
+      },
       // payment route
       {
         path: "payment/:id",
@@ -118,11 +123,19 @@ export const router = createBrowserRouter([
       },
       {
         path: "payment-cancelled",
-        Component: PaymentError,
+        element: (
+          <PrivateRoute>
+            <PaymentError></PaymentError>
+          </PrivateRoute>
+        ),
       },
       {
         path: "payment-success",
-        Component: PaymentSuccess,
+        element: (
+          <PrivateRoute>
+            <PaymentSuccess></PaymentSuccess>
+          </PrivateRoute>
+        ),
       },
     ],
   },

@@ -20,7 +20,7 @@ import useAuth from "../hooks/useAuth";
 import { Link, NavLink, Outlet } from "react-router";
 
 function DashBoardLayout() {
-  const { user,logOut } = useAuth();
+  const { user, logOut } = useAuth();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const handleLogout = () => {
@@ -42,7 +42,11 @@ function DashBoardLayout() {
       icon: <Truck size={20} />,
       path: "/dashboard/myParcels",
     },
-    { name: "Invoices", icon: <FileText size={20} />, path: "/invoices" },
+    {
+      name: "Payment History",
+      icon: <FileText size={20} />,
+      path: "/dashboard/payment-history",
+    },
     { name: "Stores", icon: <Store size={20} />, path: "/stores" },
     {
       name: "Pricing Plan",

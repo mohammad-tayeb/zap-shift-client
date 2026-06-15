@@ -13,7 +13,7 @@ export default function SendParcelForm() {
     formState: { errors },
   } = useForm({
     defaultValues: {
-      parcelType: "Document",
+      parcelType: "Not-Document",
     },
   });
   const { user } = useAuth();
@@ -73,7 +73,7 @@ export default function SendParcelForm() {
     // send the cost value with the data from the form
     const parcelData = { ...data, cost: cost, payment_status: "unpaid" };
     Swal.fire({
-      title: "Confirm Order?",
+      title: "Confirm Pickup request?",
       text: `delivary Charge: ${cost}৳`,
       icon: "warning",
       showCancelButton: true,
@@ -83,17 +83,18 @@ export default function SendParcelForm() {
     }).then((result) => {
       if (result.isConfirmed) {
         //using axios secure send data
-        axiosSecure
-          .post("/parcels", parcelData)
-          .then((res) => console.log(res.data));
-
-        Swal.fire({
-          title: "Pickup Request Submitted",
-          text: "We will collect your parcel!",
-          icon: "success",
+        axiosSecure.post("/parcels", parcelData).then((res) => {
+          console.log(res.data);
+          if (res.data.insertedId) {
+            Swal.fire({
+              title: "Pickup Request Submitted",
+              text: "We will collect your parcel!",
+              icon: "success",
+            });
+            reset();
+            navigate("/dashboard/myParcels");
+          }
         });
-        reset();
-        navigate("/dashboard/myParcels");
       }
     });
   };

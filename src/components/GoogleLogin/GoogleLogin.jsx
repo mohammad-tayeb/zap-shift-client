@@ -1,8 +1,10 @@
 //---------------------------------------------------for google login
 import useAuth from "../../hooks/useAuth";
 import { useLocation, useNavigate } from "react-router-dom";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
 
 function GoogleLogin() {
+  const axiosSecure = useAxiosSecure();
   const { GoogleSignIn } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -12,6 +14,17 @@ function GoogleLogin() {
     GoogleSignIn()
       .then((result) => {
         console.log(result.user);
+        //insert user in the db
+        const userInfo = {
+          email: result.user.email,
+          name: result.user.displayName,
+          photoURL: result.user.photoURL,
+        };
+        axiosSecure.post("/users", userInfo).then((res) => {
+          if (res.data.insertedId) {
+            console.log("user inserted from social");
+          }
+        });
         navigate(location?.state || "/", { replace: true });
       })
       .catch((error) => {

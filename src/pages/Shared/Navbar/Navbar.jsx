@@ -103,9 +103,9 @@ function Navbar() {
       <div className="navbar-end">
         {user ? (
           <div className="flex items-center">
-            <Link to="/login" className="text-secondary md:me-4 me-1">
+            <span className="text-secondary md:me-4 me-1">
               {user.displayName}
-            </Link>
+            </span>
             <Link
               onClick={handleLogout}
               className="md:btn-md btn-sm btn btn-primary text-secondary me-1"

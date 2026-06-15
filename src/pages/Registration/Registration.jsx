@@ -6,8 +6,10 @@ import useAuth from "../../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import GoogleLogin from "../../components/GoogleLogin/GoogleLogin";
 import axios from "axios";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
 
 function Registration() {
+  const axiosSecure = useAxiosSecure();
   // navigate after registration
   const location = useLocation();
   console.log(location);
@@ -46,8 +48,18 @@ function Registration() {
       }`;
 
       const res = await axios.post(image_API_URL, formData);
-
-      console.log("after image upload", res.data);
+      
+      //insert user in the db
+      const userInfo = {
+        email: data.email,
+        name: data.name,
+        photoURL: res.data.data.url,
+      };
+      axiosSecure.post("/users", userInfo).then((res) => {
+        if (res.data.insertedId) {
+          console.log("user inserted");
+        }
+      });
 
       // update firebase profile
       const userProfile = {
@@ -183,7 +195,11 @@ function Registration() {
         <div className="mt-5 text-center space-y-4">
           <p className="text-xs font-semibold text-slate-400">
             Already have an account?{" "}
-            <Link state={location.state} to="/login" className="text-[#A2C13B] hover:underline">
+            <Link
+              state={location.state}
+              to="/login"
+              className="text-[#A2C13B] hover:underline"
+            >
               Login
             </Link>
           </p>

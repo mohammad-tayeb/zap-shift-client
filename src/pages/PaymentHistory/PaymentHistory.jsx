@@ -88,7 +88,7 @@ function PaymentHistory() {
                 <td className="py-5 px-6">
                   <Link
                     to={`/dashboard/payment/${item._id}`}
-                    className="btn btn-sm btn-primary text-secondary w-full"
+                    className="btn btn-xs btn-primary text-secondary w-full"
                   >
                     View
                   </Link>

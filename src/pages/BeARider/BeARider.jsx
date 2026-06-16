@@ -1,15 +1,50 @@
 import { useForm } from "react-hook-form";
 import image from "../../assets/agent-pending.png";
+import { useLoaderData } from "react-router";
+import useAuth from "../../hooks/useAuth";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
+import { toast } from "react-toastify";
 
 function BeARider() {
+  const { user } = useAuth();
+  const axiosSecure = useAxiosSecure();
   const {
     register,
     handleSubmit,
+    watch,
+    reset,
     formState: { errors },
   } = useForm();
 
+  const senderRegion = watch("region");
+  const serviceCenters = useLoaderData();
+  const regionDuplicate = serviceCenters.map((c) => c.region); // making a set of all regions
+  const region = [...new Set(regionDuplicate)]; // making an array of all region no duplicate
+
+  // finding district based on region (sender side form)
+  const districtsByRegion = (region) => {
+    const regionDitricts = serviceCenters.filter((c) => c.region === region); //region match kora data nibe
+    const districts = regionDitricts.map((d) => d.district); //from selected data take only didtricts data
+    return districts;
+  };
+
   const onSubmit = (data) => {
-    console.log("Form Data Submitted:", data);
+    axiosSecure
+      .post("/riders", data)
+      .then((result) => {
+        if (result.data.insertedId) {
+          toast.success("Application Submitted!");
+        }
+
+        reset();
+      })
+      .catch((error) => {
+        if (error.response?.status === 409) {
+          toast.error("Application Already Exists!");
+        } else {
+          toast.error("Something went wrong!");
+        }
+      });
   };
   return (
     <div className="min-h-screen bg-slate-100 py-12 px-4 sm:px-6 lg:px-8 flex justify-center items-center">
@@ -43,6 +78,7 @@ function BeARider() {
                 </label>
                 <input
                   type="text"
+                  defaultValue={user?.displayName}
                   {...register("name", { required: "Name is required" })}
                   className="w-full px-4 py-2.5 text-sm rounded-lg border border-gray-200 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
                 />
@@ -79,44 +115,52 @@ function BeARider() {
                 </label>
                 <input
                   type="email"
+                  defaultValue={user?.email}
+                  // readOnly
                   {...register("email", { required: "Email is required" })}
                   className="w-full px-4 py-2.5 text-sm rounded-lg border border-gray-200 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
                 />
-                {errors.email && (
-                  <span className="text-xs text-red-500">
-                    {errors.email.message}
-                  </span>
-                )}
               </div>
 
-              {/* Region */}
-              <div>
-                <label className="block text-xs font-bold text-gray-700 mb-1.5">
-                  Region
-                </label>
-                <select
-                  {...register("region", { required: "Please select region" })}
-                  className="w-full px-4 py-2.5 text-sm rounded-lg border border-gray-200"
-                >
-                  <option value="">Select region</option>
-                  <option value="region1">Region 1</option>
-                  <option value="region2">Region 2</option>
-                </select>
-              </div>
+              <div className="flex items-center justify-around gap-4">
+                <div className="w-1/2">
+                  <label className="block text-xs font-bold text-[#003b36] mb-1.5">
+                    Your Region
+                  </label>
 
-              {/* District */}
-              <div>
-                <label className="block text-xs font-bold text-gray-700 mb-1.5">
-                  District
-                </label>
-                <select
-                  {...register("district", { required: "Select district" })}
-                  className="w-full px-4 py-2.5 text-sm rounded-lg border border-gray-200"
-                >
-                  <option value="">Select district</option>
-                  <option value="district1">District 1</option>
-                  <option value="district2">District 2</option>
-                </select>
+                  <select
+                    defaultValue=""
+                    {...register("region", {
+                      required: "Please select a region",
+                    })}
+                    className="w-full px-4 py-2.5 rounded-lg border border-gray-200 text-sm text-black focus:outline-none focus:ring-1 focus:ring-emerald-600 bg-white"
+                  >
+                    {region.map((r, i) => (
+                      <option key={i} value={r} className="text-gray-600">
+                        {r}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="w-1/2">
+                  <label className="block text-xs font-bold text-[#003b36] mb-1.5">
+                    Your District
+                  </label>
+                  <select
+                    defaultValue=""
+                    {...register("district", {
+                      required: "Please select a district",
+                    })}
+                    className="w-full px-4 py-2.5 rounded-lg border border-gray-200 text-sm text-black focus:outline-none focus:ring-1 focus:ring-emerald-600 bg-white"
+                  >
+                    {districtsByRegion(senderRegion).map((r, i) => (
+                      <option key={i} value="Dhaka" className="text-gray-600">
+                        {r}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
 
               {/* NID */}
@@ -156,14 +200,73 @@ function BeARider() {
               </div>
 
               {/* Bike Reg */}
-              <div>
-                <label className="block text-xs font-bold text-gray-700 mb-1.5">
-                  Bike Reg No
-                </label>
-                <input
-                  {...register("bikeRegNo")}
-                  className="w-full px-4 py-2.5 text-sm rounded-lg border border-gray-200"
-                />
+              <div className="flex flex-row gap-2">
+                <div>
+                  <label className="block text-xs font-bold text-gray-700 mb-1.5 w-2/3">
+                    Bike Reg. Area / Type
+                  </label>
+
+                  <select
+                    {...register("bikeRegAreaType", {
+                      required: "Bike registration area is required",
+                    })}
+                    className="w-full px-4 py-2.5 text-sm rounded-lg border border-gray-200"
+                  >
+                    <option value="">Select</option>
+
+                    {/* Dhaka Metro */}
+                    <option value="Dhaka Metro - L">Dhaka Metro - L</option>
+                    <option value="Dhaka Metro - H">Dhaka Metro - H</option>
+
+                    {/* Chattogram Metro */}
+                    <option value="Chattogram Metro - L">
+                      Chattogram Metro - L
+                    </option>
+                    <option value="Chattogram Metro - H">
+                      Chattogram Metro - H
+                    </option>
+
+                    {/* Other Cities */}
+                    <option value="Sylhet Metro - L">Sylhet Metro - L</option>
+                    <option value="Sylhet Metro - H">Sylhet Metro - H</option>
+
+                    <option value="Rajshahi Metro - L">
+                      Rajshahi Metro - L
+                    </option>
+                    <option value="Rajshahi Metro - H">
+                      Rajshahi Metro - H
+                    </option>
+
+                    <option value="Khulna Metro - L">Khulna Metro - L</option>
+                    <option value="Khulna Metro - H">Khulna Metro - H</option>
+
+                    <option value="Barishal Metro - L">
+                      Barishal Metro - L
+                    </option>
+                    <option value="Barishal Metro - H">
+                      Barishal Metro - H
+                    </option>
+
+                    <option value="Rangpur Metro - L">Rangpur Metro - L</option>
+                    <option value="Rangpur Metro - H">Rangpur Metro - H</option>
+
+                    <option value="Mymensingh Metro - L">
+                      Mymensingh Metro - L
+                    </option>
+                    <option value="Mymensingh Metro - H">
+                      Mymensingh Metro - H
+                    </option>
+                  </select>
+                </div>
+                <div className="w-1/3">
+                  <label className="block text-xs font-bold text-gray-700 mb-1.5">
+                    Bike Reg. No
+                  </label>
+                  <input
+                    {...register("bikeRegNo")}
+                    className="w-full px-4 py-2.5 text-sm rounded-lg border border-gray-200"
+                  />
+                </div>
               </div>
 
               {/* About (full width) */}

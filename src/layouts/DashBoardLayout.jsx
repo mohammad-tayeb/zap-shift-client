@@ -3,7 +3,6 @@ import {
   LayoutDashboard,
   Truck,
   FileText,
-  Store,
   CreditCard,
   MapPin,
   Settings,
@@ -14,6 +13,8 @@ import {
   X,
   Bell,
   ChevronDown,
+  CheckCircle,
+  UserCog,
 } from "lucide-react";
 import Logo from "../components/logo/Logo";
 import useAuth from "../hooks/useAuth";
@@ -47,7 +48,16 @@ function DashBoardLayout() {
       icon: <FileText size={20} />,
       path: "/dashboard/payment-history",
     },
-    { name: "Stores", icon: <Store size={20} />, path: "/stores" },
+    {
+      name: "Approve Riders",
+      icon: <CheckCircle size={20} />,
+      path: "/dashboard/approveRiders",
+    },
+    {
+      name: "Manage Users",
+      icon: <UserCog size={20} />,
+      path: "/dashboard/manageUsers",
+    },
     {
       name: "Pricing Plan",
       icon: <CreditCard size={20} />,

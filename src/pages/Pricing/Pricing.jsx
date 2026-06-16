@@ -103,7 +103,7 @@ function Pricing() {
             </label>
 
             <select
-              {...register("senderRegion", {
+              {...register("region", {
                 required: "Select sender region",
               })}
               className="select select-bordered w-full"

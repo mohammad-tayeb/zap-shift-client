@@ -8,6 +8,7 @@ function ParcelList() {
   const { user } = useAuth();
   const axiosSecure = useAxiosSecure();
 
+  //load data
   const { data: parcels = [], refetch } = useQuery({
     queryKey: ["myParcels", user?.email],
     enabled: !!user?.email,
@@ -56,7 +57,7 @@ function ParcelList() {
     });
   };
   return (
-    <div className="">
+    <div>
       <h2 className="text-3xl font-bold mb-6">My Parcels: {parcels.length}</h2>
 
       <div className="overflow-x-auto bg-white rounded-xl shadow">
@@ -94,11 +95,13 @@ function ParcelList() {
                 <td>{new Date(parcel?.createdAt).toLocaleString()}</td>
                 <td>
                   {parcel.payment_status === "paid" ? (
-                    <span className="px-2 py-1 rounded text-xs font-semibold bg-green-100 text-green-700">Paid</span>
+                    <span className="px-2 py-1 rounded text-xs font-semibold bg-green-100 text-green-700">
+                      Paid
+                    </span>
                   ) : (
                     <Link
                       to={`/dashboard/payment/${parcel._id}`}
-                      className="btn btn-sm btn-primary text-secondary"
+                      className="btn btn-xs btn-primary text-secondary"
                     >
                       Pay
                     </Link>
@@ -107,7 +110,7 @@ function ParcelList() {
                 <td>
                   <Link
                     to={`/dashboard/payment/${parcel._id}`}
-                    className="btn btn-sm btn-primary text-secondary w-full"
+                    className="btn btn-xs btn-primary text-secondary w-full my-1"
                   >
                     View
                   </Link>
@@ -115,13 +118,13 @@ function ParcelList() {
                     <div className="flex flex-col">
                       <button
                         onClick={() => handleParcelDelete(parcel._id)}
-                        className="btn btn-sm btn-error"
+                        className="btn btn-xs btn-error"
                       >
                         Delete
                       </button>
                       <button
                         // onClick={() => handleEdit(parcel._id)}
-                        className="btn btn-sm btn-warning"
+                        className="btn btn-xs btn-warning my-1"
                       >
                         Edit
                       </button>
@@ -133,14 +136,14 @@ function ParcelList() {
                     >
                       <button
                         disabled
-                        className="btn btn-sm btn-disabled tooltip tooltip-left"
+                        className="btn btn-xs btn-disabled tooltip tooltip-left"
                       >
                         Delete
                       </button>
                       <button
                         disabled
                         // onClick={() => handleEdit(parcel._id)}
-                        className="btn btn-sm btn-warning"
+                        className="btn btn-xs btn-warning my-1"
                       >
                         Edit
                       </button>

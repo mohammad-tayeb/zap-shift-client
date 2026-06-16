@@ -20,6 +20,8 @@ import Payment from "../pages/Payment/Payment";
 import PaymentSuccess from "../pages/PaymentSuccess/PaymentSuccess";
 import PaymentError from "../pages/PaymentError/PaymentError";
 import PaymentHistory from "../pages/PaymentHistory/PaymentHistory";
+import ApproveRiders from "../pages/ApproveRiders/ApproveRiders";
+import ManageUsers from "../pages/ManageUsers/ManageUsers";
 
 export const router = createBrowserRouter([
   //root routes
@@ -46,6 +48,7 @@ export const router = createBrowserRouter([
             <BeARider></BeARider>
           </PrivateRoute>
         ),
+        loader: () => fetch("/serviceCenters.json").then((res) => res.json()),
       },
       {
         path: "send-a-parcel",
@@ -120,6 +123,14 @@ export const router = createBrowserRouter([
       {
         path: "payment/:id",
         Component: Payment,
+      },
+      {
+        path: "approveRiders",
+        Component: ApproveRiders,
+      },
+      {
+        path: "manageUsers",
+        Component: ManageUsers,
       },
       {
         path: "payment-cancelled",

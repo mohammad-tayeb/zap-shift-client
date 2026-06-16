@@ -37,7 +37,7 @@ export default function SendParcelForm() {
     return districts;
   };
 
-  // finding district based on region (sender side form)
+  // finding district based on region (receiver side form)
   const districtsByRegionReceiver = (region) => {
     const regionDitricts = serviceCenters.filter((c) => c.region === region); //region match kora data nibe
     const districts = regionDitricts.map((d) => d.district); //from selected data take only didtricts data

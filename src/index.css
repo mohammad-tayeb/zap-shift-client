@@ -5,19 +5,17 @@
 @import "tailwindcss";
 @plugin "daisyui" {
   themes: light --default;
-};
-
+}
 
 /* changing primary and secondary color in daisyUI */
 @plugin "daisyui/theme" {
   name: "light";
   default: true;
-  --color-primary: #CAEB66;
-  --color-secondary: #03373D;
+  --color-primary: #caeb66;
+  --color-secondary: #03373d;
   --color-base-100: #f0f4f4;
 }
 /* changing primary and secondary color in daisyUI */
-
 
 /* custom font */
 body {
@@ -35,4 +33,14 @@ body {
 
 .reviewSwiper .swiper-pagination {
   bottom: -10px !important;
+}
+
+aside::-webkit-scrollbar {
+  width: 0px;
+  height: 0px;
+}
+
+aside {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge old */
 }

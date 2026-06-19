@@ -4,36 +4,32 @@ import image from "../../../assets/customer-top.png";
 import "swiper/css";
 import "swiper/css/effect-coverflow";
 import "swiper/css/pagination";
+
 import { EffectCoverflow, Pagination } from "swiper/modules";
 import ReviewCard from "./ReviewCard";
 import { Swiper, SwiperSlide } from "swiper/react";
 
-// load data from json file
 const Reviews = ({ reviewsPromise }) => {
   const reviews = use(reviewsPromise);
-  console.log(reviews);
-  // load data from json file
 
   return (
-    <div>
-      <section className="bg-[#f0f2f2] py-16 px-4 text-center font-sans">
+    <div className="w-full overflow-hidden">
+      {/* HEADER SECTION */}
+      <section className="bg-[#f0f2f2] py-10 md:py-16 px-4 text-center font-sans">
         <div className="max-w-3xl mx-auto flex flex-col items-center">
-          {/* Illustration Container */}
-          <div className="mb-6 w-full max-w-70 sm:max-w-[320px]">
+          <div className="mb-6 w-full max-w-[180px] sm:max-w-[250px] md:max-w-[320px]">
             <img
               src={image}
-              alt="Moving boxes and hand truck illustration"
+              alt="Customer illustration"
               className="w-full h-auto object-contain"
             />
           </div>
 
-          {/* Heading with typo correction (sayings -> saying) */}
-          <h2 className="text-[28px] sm:text-[36px] font-bold text-[#093333] tracking-tight mb-4">
+          <h2 className="text-xl sm:text-2xl md:text-4xl font-bold text-[#093333] mb-4">
             What our customers are saying
           </h2>
 
-          {/* Description Paragraph */}
-          <p className="text-[#555555] text-sm sm:text-base leading-relaxed max-w-2xl font-normal">
+          <p className="text-[#555555] text-sm sm:text-base leading-relaxed max-w-2xl">
             Enhance posture, mobility, and well-being effortlessly with Posture
             Pro. Achieve proper alignment, reduce pain, and strengthen your body
             with ease!
@@ -41,30 +37,48 @@ const Reviews = ({ reviewsPromise }) => {
         </div>
       </section>
 
-      <section className="mx-auto -mt-10 mb-10">
+      {/* SWIPER SECTION */}
+      <section className="max-w-7xl mx-auto px-4 -mt-6 md:-mt-10 mb-10">
         <Swiper
-          effect={"coverflow"}
+          effect="coverflow"
           grabCursor={true}
           centeredSlides={true}
-          slidesPerView={"2"}
+          slidesPerView={1}
+          spaceBetween={20}
+          loop={true}
           coverflowEffect={{
             rotate: 15,
             stretch: 0,
-            depth: 60,
+            depth: 80,
             modifier: 2,
             slideShadows: false,
+            scale: 0.95,
           }}
-          pagination={true}
+          pagination={{ clickable: true }}
+          breakpoints={{
+            640: {
+              slidesPerView: 1,
+            },
+            768: {
+              slidesPerView: 2,
+            },
+            1024: {
+              slidesPerView: 2.5,
+            },
+            1280: {
+              slidesPerView: 3,
+            },
+          }}
           modules={[EffectCoverflow, Pagination]}
-          className="mySwiper"
+          className="py-6"
         >
-          {/* map all data and send data to a component to iterate */}
           {reviews.map((review) => (
             <SwiperSlide key={review.id}>
-              <ReviewCard review={review}></ReviewCard>
+              <div className="flex justify-center">
+                <ReviewCard review={review} />
+              </div>
             </SwiperSlide>
           ))}
-          {/* map and send data to a component to show */}
         </Swiper>
       </section>
     </div>

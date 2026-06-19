@@ -1,11 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
+import Swal from "sweetalert2";
 
 function ManageUsers() {
   const axiosSecure = useAxiosSecure();
 
   //   load data
-  const { data: users = [] } = useQuery({
+  const { data: users = [], refetch } = useQuery({
     queryKey: ["manageUsers"],
     queryFn: async () => {
       const res = await axiosSecure.get(`/users`);
@@ -13,6 +14,66 @@ function ManageUsers() {
       return res.data;
     },
   });
+
+  // make user
+  const handleRoleChange = (user, role) => {
+    Swal.fire({
+      title: "Change User Role?",
+      text: `${user.name} will be changed to ${role}.`,
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#6b7280",
+      confirmButtonText: `Yes, make ${role}`,
+      cancelButtonText: "Cancel",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        axiosSecure.patch(`/users/${user._id}`, { role }).then((res) => {
+          if (res.data.modifiedCount) {
+            Swal.fire({
+              title: "Success!",
+              text: `${user.name} is now a ${role}.`,
+              icon: "success",
+              timer: 1500,
+              showConfirmButton: false,
+            });
+
+            refetch();
+          }
+        });
+      }
+    });
+  };
+
+  const handleDelete = (id) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "This user will be permanently deleted!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#6b7280",
+      confirmButtonText: "Yes, delete it!",
+      cancelButtonText: "Cancel",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        axiosSecure.delete(`/users/${id}`).then((res) => {
+          if (res.data.deletedCount === 1) {
+            Swal.fire({
+              title: "Deleted!",
+              text: "The user has been deleted successfully.",
+              icon: "success",
+              timer: 1500,
+              showConfirmButton: false,
+            });
+
+            refetch();
+          }
+        });
+      }
+    });
+  };
+
   return (
     <div className="">
       <h2 className="text-3xl font-bold mb-6">Users List: {users.length}</h2>
@@ -21,8 +82,8 @@ function ManageUsers() {
         <table className="table">
           <thead className="text-secondary">
             <tr>
-              <th>User</th>
               <th>Id</th>
+              <th>Name</th>
               <th>Email</th>
               <th>Role</th>
               <th>Created At</th>
@@ -38,22 +99,8 @@ function ManageUsers() {
                   index % 2 === 0 ? "bg-white" : "bg-gray-100"
                 } border-b border-gray-300`}
               >
-                {/* USER (photo + name) */}
-                <td>
-                  <div className="avatar">
-                    <div className="w-10 rounded-full">
-                      <img
-                        src={
-                          user?.photoURL ||
-                          "https://i.ibb.co/2kR8q6G/default-user.png"
-                        }
-                        alt={user?.name}
-                      />
-                    </div>
-                  </div>
-                </td>
-
-                <td>{user?._id}</td>
+                <td>{user?._id.slice(-5)}</td>
+                <td>{user?.name}</td>
 
                 {/* EMAIL */}
                 <td>{user?.email}</td>
@@ -83,23 +130,73 @@ function ManageUsers() {
                 {/* ACTIONS */}
                 <td>
                   <div className="flex flex-col gap-2">
-                    <button className="btn btn-xs btn-primary w-fit text-secondary">
+                    {/* View */}
+                    <button className="btn btn-xs btn-primary w-full text-secondary">
                       View
                     </button>
 
-                    {user?.role !== "admin" && (
-                      <button className="btn btn-xs btn-success w-fit">
-                        Make Admin
-                      </button>
+                    {/* USER */}
+                    {user.role === "user" && (
+                      <>
+                        <button
+                          onClick={() => handleRoleChange(user, "admin")}
+                          className="btn btn-xs btn-success w-full"
+                        >
+                          Make Admin
+                        </button>
+
+                        <button
+                          onClick={() => handleRoleChange(user, "rider")}
+                          className="btn btn-xs btn-warning w-full"
+                        >
+                          Make Rider
+                        </button>
+                      </>
                     )}
 
-                    {user?.role !== "rider" && (
-                      <button className="btn btn-xs btn-warning w-fit">
-                        Make Rider
-                      </button>
+                    {/* ADMIN */}
+                    {user.role === "admin" && (
+                      <>
+                        <button
+                          onClick={() => handleRoleChange(user, "user")}
+                          className="btn btn-xs btn-info w-full"
+                        >
+                          Make User
+                        </button>
+
+                        <button
+                          onClick={() => handleRoleChange(user, "rider")}
+                          className="btn btn-xs btn-warning w-full"
+                        >
+                          Make Rider
+                        </button>
+                      </>
                     )}
 
-                    <button className="btn btn-xs btn-error w-fit">
+                    {/* RIDER */}
+                    {user.role === "rider" && (
+                      <>
+                        <button
+                          onClick={() => handleRoleChange(user, "user")}
+                          className="btn btn-xs btn-info w-full"
+                        >
+                          Make User
+                        </button>
+
+                        <button
+                          onClick={() => handleRoleChange(user, "admin")}
+                          className="btn btn-xs btn-success w-full"
+                        >
+                          Make Admin
+                        </button>
+                      </>
+                    )}
+
+                    {/* DELETE */}
+                    <button
+                      onClick={() => handleDelete(user._id)}
+                      className="btn btn-xs btn-error w-full"
+                    >
                       Delete
                     </button>
                   </div>

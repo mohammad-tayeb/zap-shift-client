@@ -15,6 +15,7 @@ import {
   ChevronDown,
   CheckCircle,
   UserCog,
+  UserCheck,
 } from "lucide-react";
 
 import Logo from "../components/logo/Logo";
@@ -73,6 +74,12 @@ function DashBoardLayout() {
       name: "Approve Riders",
       icon: <CheckCircle size={20} />,
       path: "/dashboard/approveRiders",
+      roles: ["admin"],
+    },
+    {
+      name: "Assign Riders",
+      icon: <UserCheck size={20} />, // or Truck, Users, Bike, etc.
+      path: "/dashboard/assignRiders",
       roles: ["admin"],
     },
     {

@@ -23,6 +23,8 @@ import PaymentHistory from "../pages/PaymentHistory/PaymentHistory";
 import ApproveRiders from "../pages/ApproveRiders/ApproveRiders";
 import ManageUsers from "../pages/ManageUsers/ManageUsers";
 import AdminRoute from "./AdminRoute";
+import TrackParcel from "../pages/TrackParcel/TrackParcel";
+import AssignRiders from "../pages/AssignRiders/AssignRiders";
 
 export const router = createBrowserRouter([
   //root routes
@@ -68,6 +70,10 @@ export const router = createBrowserRouter([
         path: "pricing",
         Component: Pricing,
         loader: () => fetch("/serviceCenters.json").then((res) => res.json()),
+      },
+      {
+        path: "trackParcel",
+        Component: TrackParcel,
       },
     ],
   },
@@ -127,12 +133,28 @@ export const router = createBrowserRouter([
       },
       {
         path: "approveRiders",
-        element: <AdminRoute><ApproveRiders></ApproveRiders></AdminRoute>
+        element: (
+          <AdminRoute>
+            <ApproveRiders></ApproveRiders>
+          </AdminRoute>
+        ),
       },
       {
         path: "manageUsers",
         // Component: ManageUsers,
-        element: <AdminRoute><ManageUsers></ManageUsers></AdminRoute>
+        element: (
+          <AdminRoute>
+            <ManageUsers></ManageUsers>
+          </AdminRoute>
+        ),
+      },
+      {
+        path: "assignRiders",
+        element: (
+          <AdminRoute>
+            <AssignRiders></AssignRiders>
+          </AdminRoute>
+        ),
       },
       {
         path: "payment-cancelled",

@@ -70,7 +70,8 @@ function ParcelList() {
               <th>Receiver Location</th>
               <th>Cost</th>
               <th>Created At</th>
-              <th>Payment Status</th>
+              <th>Payment <br /> Status</th>
+              <th>Delivery <br /> Status</th>
               <th>Action</th>
             </tr>
           </thead>
@@ -83,7 +84,7 @@ function ParcelList() {
                   index % 2 === 0 ? "bg-white" : "bg-gray-100"
                 } border-b border-gray-300`}
               >
-                <td>{parcel?._id}</td>
+                <td>{parcel?._id.slice(-5)}</td>
 
                 <td>{parcel?.parcelName}</td>
 
@@ -107,6 +108,7 @@ function ParcelList() {
                     </Link>
                   )}
                 </td>
+                <td>{parcel?.deliveryStatus || "NaN"}</td>
                 <td>
                   <Link
                     to={`/dashboard/payment/${parcel._id}`}

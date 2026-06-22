@@ -1,15 +1,20 @@
 import { useQuery } from "@tanstack/react-query";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 import Swal from "sweetalert2";
+import { useState } from "react";
 
 function ManageUsers() {
   const axiosSecure = useAxiosSecure();
+  const [searchText, setSearchText] = useState("");
+  const [role, setRole] = useState("");
 
   //   load data
   const { data: users = [], refetch } = useQuery({
-    queryKey: ["manageUsers"],
+    queryKey: ["manageUsers", searchText, role],
     queryFn: async () => {
-      const res = await axiosSecure.get(`/users`);
+      const res = await axiosSecure.get(
+        `/users?search=${searchText}&role=${role}`,
+      );
       console.log(res.data);
       return res.data;
     },
@@ -76,8 +81,34 @@ function ManageUsers() {
 
   return (
     <div className="">
-      <h2 className="text-3xl font-bold mb-6">Users List: {users.length}</h2>
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+        {/* Title */}
+        <h2 className="text-3xl font-bold">Users: {users.length}</h2>
 
+        {/* Filters */}
+        <div className="flex flex-col sm:flex-row gap-3 w-full md:w-1/2 md:justify-end">
+          {/* Status filter */}
+          <select
+            value={role}
+            onChange={(e) => setRole(e.target.value)}
+            className="select select-bordered w-full sm:w-40"
+          >
+            <option value="">All Users</option>
+            <option value="admin">Admin</option>
+            <option value="rider">Rider</option>
+            <option value="user">User</option>
+          </select>
+
+          {/* Search bar */}
+          <input
+            type="text"
+            placeholder="Search by name or email..."
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
+            className="input input-bordered w-full sm:w-64"
+          />
+        </div>
+      </div>
       <div className="overflow-x-auto bg-white rounded-xl shadow">
         <table className="table">
           <thead className="text-secondary">

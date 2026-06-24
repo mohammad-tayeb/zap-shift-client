@@ -23,7 +23,7 @@ function AssignRiders() {
   const { data: riders = [] } = useQuery({
     queryKey: ["availableRiders"],
     queryFn: async () => {
-      const res = await axiosSecure.get(`riders?workStatus=available`);
+      const res = await axiosSecure.get(`/riders?workStatus=available`);
       return res.data;
     },
   });
@@ -32,8 +32,7 @@ function AssignRiders() {
     const filtered = riders.filter(
       (rider) =>
         rider.workStatus === "available" &&
-        rider.region === parcel.receiverRegion &&
-        rider.district === parcel.receiverDistrict
+        rider.region === parcel.receiverRegion
     );
 
     setMatchedRiders(filtered);
@@ -45,6 +44,7 @@ function AssignRiders() {
       riderId: rider._id,
       riderEmail: rider.email,
       riderName: rider.name,
+      assignedAt: new Date(),
       parcelId: selectedParcel._id,
     };
 
@@ -95,7 +95,7 @@ function AssignRiders() {
               <th>Sender</th>
               <th>Receiver</th>
               <th>
-                Receiver <br /> Region
+                Sender <br /> Region
               </th>
               <th>
                 Delivery <br /> Status

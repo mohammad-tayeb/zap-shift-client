@@ -16,6 +16,7 @@ import {
   CheckCircle,
   UserCog,
   UserCheck,
+  ClipboardCheck,
 } from "lucide-react";
 
 import Logo from "../components/logo/Logo";
@@ -45,10 +46,9 @@ function DashBoardLayout() {
 
   const navClass = ({ isActive }) =>
     `flex items-center gap-3 px-3 py-2.5 rounded-xl font-medium text-sm transition-all duration-200
-    ${
-      isActive
-        ? "bg-primary text-gray-900 shadow-sm shadow-primary/20"
-        : "text-gray-500 hover:bg-gray-50 hover:text-gray-900"
+    ${isActive
+      ? "bg-primary text-gray-900 shadow-sm shadow-primary/20"
+      : "text-gray-500 hover:bg-gray-50 hover:text-gray-900"
     }`;
 
   const menuItems = [
@@ -99,6 +99,12 @@ function DashBoardLayout() {
       icon: <MapPin size={20} />,
       path: "/dashboard/covarage-area",
       roles: ["admin"],
+    },
+    {
+      name: "Assigned Parcels",
+      icon: <ClipboardCheck size={20} />,
+      path: "/dashboard/acceptParcel",
+      roles: ["rider"],
     },
   ];
 

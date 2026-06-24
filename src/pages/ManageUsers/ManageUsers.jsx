@@ -7,13 +7,14 @@ function ManageUsers() {
   const axiosSecure = useAxiosSecure();
   const [searchText, setSearchText] = useState("");
   const [role, setRole] = useState("");
+  const [limit, setLimit] = useState(10);
 
   //   load data
   const { data: users = [], refetch } = useQuery({
-    queryKey: ["manageUsers", searchText, role],
+    queryKey: ["manageUsers", searchText, role, limit],
     queryFn: async () => {
       const res = await axiosSecure.get(
-        `/users?search=${searchText}&role=${role}`,
+        `/users?search=${searchText}&role=${role}&limit=${limit}`,
       );
       console.log(res.data);
       return res.data;
@@ -87,6 +88,17 @@ function ManageUsers() {
 
         {/* Filters */}
         <div className="flex flex-col sm:flex-row gap-3 w-full md:w-1/2 md:justify-end">
+          {/* limit filter */}
+          <select
+            value={limit}
+            onChange={(e) => setLimit(Number(e.target.value))}
+            className="select select-bordered"
+          >
+            <option value={10}>10</option>
+            <option value={50}>50</option>
+            <option value={100}>100</option>
+          </select>
+
           {/* Status filter */}
           <select
             value={role}
@@ -126,9 +138,8 @@ function ManageUsers() {
             {users.map((user, index) => (
               <tr
                 key={user?._id}
-                className={`${
-                  index % 2 === 0 ? "bg-white" : "bg-gray-100"
-                } border-b border-gray-300`}
+                className={`${index % 2 === 0 ? "bg-white" : "bg-gray-100"
+                  } border-b border-gray-300`}
               >
                 <td>{user?._id.slice(-5)}</td>
                 <td>{user?.name}</td>

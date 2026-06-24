@@ -43,12 +43,11 @@ function Registration() {
       const formData = new FormData();
       formData.append("image", profileImage);
 
-      const image_API_URL = `https://api.imgbb.com/1/upload?key=${
-        import.meta.env.VITE_imageBB
-      }`;
+      const image_API_URL = `https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_imageBB
+        }`;
 
       const res = await axios.post(image_API_URL, formData);
-      
+
       //insert user in the db
       const userInfo = {
         email: data.email,
@@ -75,7 +74,11 @@ function Registration() {
 
       navigate(location?.state || "/", { replace: true });
     } catch (error) {
-      console.log(error.message);
+      console.log("Caught error:", error);
+      console.log("Code:", error.code);
+      console.log("Message:", error.message);
+
+      alert(error.message);
     }
   };
   // Registration funtionality

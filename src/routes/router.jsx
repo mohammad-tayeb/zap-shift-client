@@ -25,6 +25,7 @@ import ManageUsers from "../pages/ManageUsers/ManageUsers";
 import AdminRoute from "./AdminRoute";
 import TrackParcel from "../pages/TrackParcel/TrackParcel";
 import AssignRiders from "../pages/AssignRiders/AssignRiders";
+import AcceptParcels from "../pages/AcceptParcels/AcceptParcels";
 
 export const router = createBrowserRouter([
   //root routes
@@ -171,6 +172,10 @@ export const router = createBrowserRouter([
             <PaymentSuccess></PaymentSuccess>
           </PrivateRoute>
         ),
+      },
+      {
+        path: "acceptParcel",
+        Component: AcceptParcels,
       },
     ],
   },

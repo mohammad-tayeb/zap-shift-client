@@ -7,6 +7,8 @@ import { useNavigate } from "react-router-dom";
 import GoogleLogin from "../../components/GoogleLogin/GoogleLogin";
 import axios from "axios";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
+import { toast } from "react-toastify";
+import Toast from "../../components/Toast/Toast";
 
 function Registration() {
   const axiosSecure = useAxiosSecure();
@@ -70,21 +72,20 @@ function Registration() {
         .catch((error) => console.log(error));
 
       // success
-      alert("User created!");
+      toast.success("User created!");
 
       navigate(location?.state || "/", { replace: true });
     } catch (error) {
-      console.log("Caught error:", error);
-      console.log("Code:", error.code);
-      console.log("Message:", error.message);
-
-      alert(error.message);
+      if (error.code === "auth/email-already-in-use") {
+        toast.error("Email is already in use.");
+      }
     }
   };
   // Registration funtionality
 
   return (
     <div className="min-h-screen w-full flex flex-col md:flex-row font-sans bg-white">
+      <Toast></Toast>
       {/* Left Side: Registration Form */}
       <div className="w-full md:w-1/2 flex flex-col justify-center px-8 sm:px-16 lg:px-24 xl:px-32 md:pt-10 pt-5 pb-12">
         {/* Logo */}

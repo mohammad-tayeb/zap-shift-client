@@ -78,7 +78,7 @@ function TrackParcel() {
   console.log("typeof parcel:", typeof parcel);
 
   return (
-    <div className=" bg-gray-50 flex items-center justify-center p-6 antialiased font-sans">
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6 antialiased font-sans">
       <div className="w-full max-w-7xl bg-white rounded-3xl shadow-sm border border-gray-100 p-8 md:p-12">
         {/* Header Section */}
         <header className="mb-10">

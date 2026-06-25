@@ -11,6 +11,7 @@ import "swiper/css/pagination";
 
 // import required modules
 import { Autoplay, Pagination } from "swiper/modules";
+import { Link } from "react-router";
 
 function Banner() {
   const banners = [banner1, banner2, banner3];
@@ -39,7 +40,7 @@ function Banner() {
 
               {/* CTA Button */}
               <div className="absolute bottom-3 left-3 sm:bottom-6 sm:left-6 md:bottom-10 md:left-12">
-                <button className="flex items-center gap-2 border-2 border-white bg-[#C5E763] hover:bg-[#b5d854] text-[#0F2D37] font-semibold px-3 py-2 sm:px-5 sm:py-3 md:px-6 md:py-3 rounded-full transition-all duration-200 group text-[10px] sm:text-sm md:text-base">
+                <Link to="/trackParcel" className="flex items-center gap-2 border-2 border-white bg-[#C5E763] hover:bg-[#b5d854] text-[#0F2D37] font-semibold px-3 py-2 sm:px-5 sm:py-3 md:px-6 md:py-3 rounded-full transition-all duration-200 group text-[10px] sm:text-sm md:text-base">
                   <span>Track Your Parcel</span>
 
                   <div className="bg-[#0F2D37] text-white rounded-full flex items-center justify-center w-5 h-5 sm:w-7 sm:h-7 transition-transform group-hover:scale-105">
@@ -57,7 +58,7 @@ function Banner() {
                       />
                     </svg>
                   </div>
-                </button>
+                </Link>
               </div>
             </div>
           </div>

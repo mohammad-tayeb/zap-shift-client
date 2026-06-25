@@ -1,9 +1,11 @@
 import { Link, NavLink } from "react-router";
 import Logo from "../../../components/logo/Logo";
 import useAuth from "../../../hooks/useAuth";
+import useRole from "../../../hooks/useRole";
 
 function Navbar() {
   const { user, logOut } = useAuth();
+  const { role } = useRole()
   console.log(user);
 
   // handle logout funtionality
@@ -14,6 +16,8 @@ function Navbar() {
         console.log(error);
       });
   };
+
+
 
   const links = (
     <>
@@ -35,18 +39,20 @@ function Navbar() {
         </NavLink>
       </li>
 
-      <li className="font-bold text-gray-600 hover:text-secondary">
-        <NavLink className="hover:bg-transparent" to="/be-a-rider">
-          Be a Rider
-        </NavLink>
-      </li>
+      {role != "rider" && (
+        <li className="font-bold text-gray-600 hover:text-secondary">
+          <NavLink className="hover:bg-transparent" to="/be-a-rider">
+            Be a Rider
+          </NavLink>
+        </li>
+      )}
 
       <li className="font-bold text-gray-600 hover:text-secondary">
         <NavLink className="hover:bg-transparent" to="/send-a-parcel">
           Send a Parcel
         </NavLink>
       </li>
-      
+
       {user ? (
         <li className="font-bold text-gray-600 hover:text-secondary">
           <NavLink className="hover:bg-transparent" to="/dashboard" end>

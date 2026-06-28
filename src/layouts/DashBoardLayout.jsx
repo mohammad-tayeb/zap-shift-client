@@ -17,6 +17,7 @@ import {
   UserCog,
   UserCheck,
   ClipboardCheck,
+  LayoutDashboardIcon,
 } from "lucide-react";
 
 import Logo from "../components/logo/Logo";
@@ -99,6 +100,12 @@ function DashBoardLayout() {
       icon: <MapPin size={20} />,
       path: "/dashboard/covarage-area",
       roles: ["admin"],
+    },
+    {
+      name: "Dashboard",
+      icon: <LayoutDashboardIcon size={20} />,
+      path: "/dashboard/riderStatics",
+      roles: ["rider"],
     },
     {
       name: "Assigned Parcels",

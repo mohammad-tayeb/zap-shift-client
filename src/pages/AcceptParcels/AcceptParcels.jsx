@@ -3,27 +3,65 @@ import useAuth from "../../hooks/useAuth";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 import { toast } from "react-toastify";
 import Toast from "../../components/Toast/Toast";
+import { useState } from "react";
 
 function AcceptParcels() {
-    const { user } = useAuth();
+    const { user, loading } = useAuth();
     const axiosSecure = useAxiosSecure();
+    const [filter, setFilter] = useState("all");
 
-    // Fetch data
-    const { data: parcelToAccept = [], refetch } = useQuery({
+    const {
+        data: parcelToAccept = [],
+        isLoading,
+        refetch,
+    } = useQuery({
         queryKey: ["assignedParcelToRider", user?.email],
-        enabled: !!user?.email,
+        enabled: !loading && !!user?.email,
         queryFn: async () => {
             const res = await axiosSecure.get(
                 `/parcels?riderEmail=${user.email}`
             );
-            return res.data;
+
+            // Always return an array
+            return Array.isArray(res.data) ? res.data : [];
         },
     });
 
-    const handleStatusUpdate = async (id, status, message) => {
+    // Show loading while auth or query is loading
+    if (loading || isLoading) {
+        return (
+            <div className="flex justify-center items-center h-64">
+                <span className="loading loading-spinner loading-lg"></span>
+            </div>
+        );
+    }
+
+    // Safety check
+    const parcels = Array.isArray(parcelToAccept) ? parcelToAccept : [];
+
+    const filteredParcels = parcels.filter((parcel) => {
+        if (filter === "all") return true;
+
+        if (filter === "assigned")
+            return parcel.deliveryStatus === "riderAssigned";
+
+        if (filter === "accepted")
+            return (
+                parcel.deliveryStatus === "parcelAcceptedByRider" ||
+                parcel.deliveryStatus === "parcelPickedByRider"
+            );
+
+        if (filter === "completed")
+            return parcel.deliveryStatus === "parcelDelivered";
+
+        return true;
+    });
+
+    const handleStatusUpdate = async (id, status, message, riderId) => {
         try {
             const res = await axiosSecure.patch(`/parcelStatus/${id}`, {
                 deliveryStatus: status,
+                riderId,
             });
 
             if (res.data.modifiedCount > 0) {
@@ -35,12 +73,44 @@ function AcceptParcels() {
             console.error(error);
         }
     };
-
     return (
-        <div className="p-4 w-full max-w-full box-border">
+        <div className="px-4 w-full max-w-full box-border">
             <h2 className="text-xl font-bold mb-4">
-                Accept Parcels ({parcelToAccept.length})
+                Accept Parcels ({parcelToAccept?.length})
             </h2>
+            <div className="flex flex-wrap gap-2 mb-4">
+                <button
+                    onClick={() => setFilter("all")}
+                    className={`btn btn-sm ${filter === "all" ? "btn-primary text-secondary" : "btn-outline"
+                        }`}
+                >
+                    All
+                </button>
+
+                <button
+                    onClick={() => setFilter("assigned")}
+                    className={`btn btn-sm ${filter === "assigned" ? "btn-primary text-secondary" : "btn-outline"
+                        }`}
+                >
+                    Assigned
+                </button>
+
+                <button
+                    onClick={() => setFilter("accepted")}
+                    className={`btn btn-sm ${filter === "accepted" ? "btn-primary text-secondary" : "btn-outline"
+                        }`}
+                >
+                    Accepted
+                </button>
+
+                <button
+                    onClick={() => setFilter("completed")}
+                    className={`btn btn-sm ${filter === "completed" ? "btn-primary text-secondary" : "btn-outline"
+                        }`}
+                >
+                    Completed
+                </button>
+            </div>
 
             <div className="w-full overflow-x-auto border border-gray-200 rounded-lg shadow-sm">
                 <table className="w-full text-sm text-left border-collapse table-auto">
@@ -51,14 +121,15 @@ function AcceptParcels() {
                             <th className="p-3">Receiver Details</th>
                             <th className="p-3">Cost & Weight</th>
                             <th className="p-3">Status</th>
+                            <th className="p-3">Timeline</th>
                             <th className="p-3 text-center">Actions</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
-                        {parcelToAccept.map((parcel) => (
+                        {filteredParcels?.map((parcel) => (
                             <tr key={parcel._id} className="hover:bg-gray-50">
                                 {/* Tracking & Item Details */}
-                                <td className="p-3 max-w-[180px] break-words">
+                                <td className="p-3 max-w-45 wrap-break-word">
                                     <span className="font-semibold text-blue-600 block text-xs">
                                         {parcel.trackingId}
                                     </span>
@@ -71,7 +142,7 @@ function AcceptParcels() {
                                 </td>
 
                                 {/* Sender Details */}
-                                <td className="p-3 text-xs max-w-[200px] break-words">
+                                <td className="p-3 text-xs max-w-50 wrap-break-word">
                                     <p className="font-medium text-gray-800">{parcel.senderName}</p>
                                     <p className="text-gray-500">{parcel.senderPhone}</p>
                                     <p className="text-gray-400 italic">
@@ -80,7 +151,7 @@ function AcceptParcels() {
                                 </td>
 
                                 {/* Receiver Details */}
-                                <td className="p-3 text-xs max-w-[200px] break-words">
+                                <td className="p-3 text-xs max-w-50 wrap-break-word">
                                     <p className="font-medium text-gray-800">{parcel.receiverName}</p>
                                     <p className="text-gray-500">{parcel.receiverPhone}</p>
                                     <p className="text-gray-400 italic">
@@ -103,15 +174,53 @@ function AcceptParcels() {
                                         {parcel.payment_status}
                                     </span>
                                 </td>
+                                <td className="p-3 text-xs">
+                                    <div className="space-y-1">
+                                        {parcel.acceptedAt && (
+                                            <p>
+                                                <span className="font-semibold text-emerald-600">
+                                                    Accepted:
+                                                </span>
+                                                <br />
+                                                {new Date(parcel.acceptedAt).toLocaleString()}
+                                            </p>
+                                        )}
 
+                                        {parcel.pickedUpAt && (
+                                            <p>
+                                                <span className="font-semibold text-blue-600">
+                                                    Picked:
+                                                </span>
+                                                <br />
+                                                {new Date(parcel.pickedUpAt).toLocaleString()}
+                                            </p>
+                                        )}
+
+                                        {parcel.deliveredAt && (
+                                            <p>
+                                                <span className="font-semibold text-purple-600">
+                                                    Delivered:
+                                                </span>
+                                                <br />
+                                                {new Date(parcel.deliveredAt).toLocaleString()}
+                                            </p>
+                                        )}
+
+                                        {!parcel.acceptedAt &&
+                                            !parcel.pickedUpAt &&
+                                            !parcel.deliveredAt && (
+                                                <span className="text-gray-400 italic">
+                                                    No updates
+                                                </span>
+                                            )}
+                                    </div>
+                                </td>
                                 {/* Accept / Decline Actions */}
                                 <td className="p-3 text-center whitespace-nowrap">
-                                    <div className="flex items-center justify-center gap-2">
+                                    <div className="flex flex-col items-center justify-center gap-2">
                                         {/* Accept */}
                                         <button
-                                            disabled={
-                                                parcel.deliveryStatus !== "assignedToRider"
-                                            }
+                                            disabled={parcel.deliveryStatus !== "riderAssigned"}
                                             onClick={() =>
                                                 handleStatusUpdate(
                                                     parcel._id,
@@ -121,16 +230,14 @@ function AcceptParcels() {
                                             }
                                             className="btn btn-xs bg-emerald-600 text-white disabled:opacity-50"
                                         >
-                                            {parcel.deliveryStatus === "assignedToRider"
+                                            {parcel.deliveryStatus === "riderAssigned"
                                                 ? "Accept"
                                                 : "Accepted"}
                                         </button>
 
                                         {/* Pick Up */}
                                         <button
-                                            disabled={
-                                                parcel.deliveryStatus !== "parcelAcceptedByRider"
-                                            }
+                                            disabled={parcel.deliveryStatus !== "parcelAcceptedByRider"}
                                             onClick={() =>
                                                 handleStatusUpdate(
                                                     parcel._id,
@@ -147,14 +254,13 @@ function AcceptParcels() {
 
                                         {/* Delivered */}
                                         <button
-                                            disabled={
-                                                parcel.deliveryStatus !== "parcelPickedByRider"
-                                            }
+                                            disabled={parcel.deliveryStatus !== "parcelPickedByRider"}
                                             onClick={() =>
                                                 handleStatusUpdate(
                                                     parcel._id,
                                                     "parcelDelivered",
-                                                    "Parcel Delivered"
+                                                    "Parcel Delivered",
+                                                    parcel.riderId,
                                                 )
                                             }
                                             className="btn btn-xs bg-purple-600 text-white disabled:opacity-50"
@@ -166,7 +272,15 @@ function AcceptParcels() {
 
                                         {/* Decline */}
                                         <button
-                                            disabled={parcel.deliveryStatus !== "assignedToRider"}
+                                            disabled={parcel.deliveryStatus !== "riderAssigned"}
+                                            onClick={() =>
+                                                handleStatusUpdate(
+                                                    parcel._id,
+                                                    "rejectedByRider",
+                                                    "Parcel Rejected By Rider",
+                                                    parcel.riderId,
+                                                )
+                                            }
                                             className="btn btn-xs bg-red-600 text-white disabled:opacity-50"
                                         >
                                             Decline
@@ -175,7 +289,7 @@ function AcceptParcels() {
                                 </td>
                             </tr>
                         ))}
-                        {parcelToAccept.length === 0 && (
+                        {filteredParcels?.length === 0 && (
                             <tr>
                                 <td colSpan="6" className="p-8 text-center text-gray-500">
                                     No parcels assigned to you yet.

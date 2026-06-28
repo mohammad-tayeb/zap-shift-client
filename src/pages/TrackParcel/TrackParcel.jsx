@@ -36,47 +36,63 @@ function TrackParcel() {
     {
       key: "pending-pickup",
       label: "Pending Pickup",
+      dbStatus: "pending-pickup",
     },
     {
       key: "riderAssigned",
       label: "Rider Assigned",
+      dbStatus: "riderAssigned",
     },
     {
-      key: "out-for-collection",
-      label: "Out for Collection",
+      key: "parcelAcceptedByRider",
+      label: "Parcel Accepted",
+      dbStatus: "parcelAcceptedByRider",
     },
     {
-      key: "parcel-collected",
-      label: "Parcel Collected",
-    },
-    {
-      key: "in-transit",
-      label: "In Transit",
-    },
-    {
-      key: "arrived-at-destination-hub",
-      label: "Arrived at Destination Hub",
-    },
-    {
-      key: "out-for-delivery",
+      key: "outForDelivery",
       label: "Out for Delivery",
+      dbStatus: "parcelPickedByRider",
     },
     {
-      key: "delivered",
+      key: "parcelDelivered",
       label: "Delivered",
+      dbStatus: "parcelDelivered",
     },
   ];
 
-  const currentStepIndex = trackingSteps.findIndex(
-    (step) => step.key === parcel?.deliveryStatus
-  );
+  const statusToStep = {
+    "pending-pickup": 0,
+    riderAssigned: 1,
+    parcelAcceptedByRider: 2,
+    parcelPickedByRider: 3,
+    parcelDelivered: 4,
+  };
+
+  const currentStepIndex =
+    statusToStep[parcel?.deliveryStatus] ?? -1;
 
 
+  const getStepDate = (step) => {
+    switch (step.dbStatus) {
+      case "pending-pickup":
+        return parcel?.createdAt;
 
-  console.log("searchedId:", searchedId);
-  console.log("parcel:", parcel);
-  console.log("typeof parcel:", typeof parcel);
+      case "riderAssigned":
+        return parcel?.assignedAt || parcel?.createdAt;
 
+      case "parcelAcceptedByRider":
+        return parcel?.acceptedAt;
+
+      case "parcelPickedByRider":
+        return parcel?.pickedUpAt;
+
+      case "parcelDelivered":
+        return parcel?.deliveredAt;
+
+      default:
+        return null;
+    }
+  };
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6 antialiased font-sans">
       <div className="w-full max-w-7xl bg-white rounded-3xl shadow-sm border border-gray-100 p-8 md:p-12">
@@ -326,9 +342,9 @@ function TrackParcel() {
                           </span>
                         </div>
 
-                        {(isCompleted || isCurrent) && parcel?.createdAt && (
+                        {(isCompleted || isCurrent) && getStepDate(step) && (
                           <p className="text-xs text-gray-500 mt-3">
-                            {new Date(parcel.createdAt).toLocaleString(undefined, {
+                            {new Date(getStepDate(step)).toLocaleString(undefined, {
                               dateStyle: "medium",
                               timeStyle: "short",
                             })}

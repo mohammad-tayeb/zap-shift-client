@@ -26,7 +26,7 @@ const useAxiosSecure = () => {
       (error) => {
         console.log(error);
 
-        const statusCode = error.status;
+        const statusCode = error.response?.status;
         if (statusCode === 401 || statusCode === 403) {
           logOut().then(() => {
             navigate("/login");
@@ -40,7 +40,7 @@ const useAxiosSecure = () => {
     //    - Prevents duplicate interceptors stacking on re-renders
     return () => {
       axiosSecure.interceptors.request.eject(reqInterceptor);
-      axiosSecure.interceptors.request.eject(resInterceptor);
+      axiosSecure.interceptors.response.eject(resInterceptor);
     };
   }, [user, logOut, navigate]);
   //--------------------------------JWT varify

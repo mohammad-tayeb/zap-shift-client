@@ -26,6 +26,8 @@ import AdminRoute from "./AdminRoute";
 import TrackParcel from "../pages/TrackParcel/TrackParcel";
 import AssignRiders from "../pages/AssignRiders/AssignRiders";
 import AcceptParcels from "../pages/AcceptParcels/AcceptParcels";
+import RiderStatics from "../pages/RiderStatics/RiderStatics";
+import Portfolio from "../pages/Portfolio/Portfolio";
 
 export const router = createBrowserRouter([
   //root routes
@@ -177,6 +179,14 @@ export const router = createBrowserRouter([
         path: "acceptParcel",
         Component: AcceptParcels,
       },
+      {
+        path: "riderStatics",
+        Component: RiderStatics,
+      },
     ],
+  },
+  {
+    path: "portfolio",
+    Component: Portfolio
   },
 ]);
